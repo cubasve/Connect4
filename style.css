@@ -1,0 +1,49 @@
+*, *::after, *::before { /* select everything in the application */
+    box-sizing: border-box;
+    /* box-sizing = how a width & height of an element is calculated */
+
+    /* content-box (default) = element's width & height doesn't include padding and border 
+    (only the contents within the element)*/
+    /* border-box = element's width & height includes element's padding and border */
+}
+
+body {
+    margin: 0;
+    /* body is the size of the entire page - scales with different screen sizes */
+    height: 100vh; /* body takes up 100% of viewport height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#markers {
+    display: grid;
+    /* 10vmin = 10 minimum viewport units - unit scales with viewport */
+    /* either the smaller of the height or the width in terms of the viewport size */
+    grid-template-columns: repeat(7, 10vmin);
+    grid-template-rows: 6vmin;
+    grid-column-gap: 1vmin;
+}
+
+/* makes markers a triangle */
+#markers div {
+    border-top: 5vmin solid grey;
+    border-left: 5vmin solid transparent;
+    border-right: 5vmin solid transparent;
+}
+
+#markers div:hover {
+    cursor: pointer;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(7, 10vmin);
+    grid-template-rows: repeat(6, 10vmin);
+    grid-gap: 1vmin;
+}
+
+#board div {
+    border: 1px solid grey;
+    border-radius: 50%;
+}
