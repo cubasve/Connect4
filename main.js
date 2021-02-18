@@ -20,6 +20,9 @@ markersEl.addEventListener('click', handleMarkerClick);
 initialize();
 
 function handleMarkerClick(e) {
+    //If it's the computer's turn, ignore marker clicks
+    if (turn === -1) return;
+
     let element = e.target; //e.target is <div id="column0"></div>
     //Only want the index value, not the entire id of 'column0'
     //columnId is a number (0-6)
@@ -38,6 +41,27 @@ function handleMarkerClick(e) {
     setWinner();
     turn = turn * -1; //Change player's turn
     render();
+
+    /* FOR AUTOMATED COMPUTER PLAYER */
+    setTimeout(computerPlayTurn, 1000);
+}
+
+//Computer player is -1 (red)
+function computerPlayTurn() {
+    //If it's not the computer's turn, return
+    if (turn === 1 || winner) return;
+
+    let columnId = Math.floor(Math.random() * 7); //random number between 0-6
+    //Keep reseting columnId until we find one that is empty and we can play in
+    while (board[columnId].indexOf(0) === -1) {
+        columnId = Math.floor(Math.random() * 7);
+    }
+    let rowId = board[columnId].indexOf(0);
+
+    board[columnId][rowId] = turn;
+    setWinner();
+    turn = turn * -1; //Change player's turn
+    render();
 }
 
 function setWinner() {
@@ -52,10 +76,18 @@ function setWinner() {
 
             if (winner) break;
 
-            //If foundZero is still falsey, it executes board[columnIndex][rowIndex] === 0
-            //If foundZero becomes truthy, 
+            //If foundZero is falsey, it executes board[columnIndex][rowIndex] === 0
+            //and it will continue to check each cell in the board
+
+            //If board[columnIndex][rowIndex] === 0 returns true, then foundZero becomes true
             foundZero = foundZero || board[columnIndex][rowIndex] === 0;
+            //THIS IS EQUIVALENT: if (!foundZero) foundZero = board[columnIndex][rowIndex] === 0
         }
+        if (winner) break;
+    }
+    //There's no winner and the board is full (can't play anymore - no more 0's left on board), it's a tie
+    if (!winner && !foundZero) {
+        winner = 'T';
     }
 }
 
@@ -131,7 +163,7 @@ function render() {
             messageEl.textContent = 'It\'s a tie!';
         } else {
             let color = colors[winner];
-            messageEl.innerHTML = `<span style="color:${color}">${color.toUpperCase()}</span> wins!`;
+            messageEl.innerHTML = `<span style="color:${color}">${color.toUpperCase()}</span> is the winner!`;
         }
     } else {
         let color = colors[turn];
