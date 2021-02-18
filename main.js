@@ -14,10 +14,40 @@ const markersEl = document.getElementById('markers');
 let cellEls;
 
 /*----------EVENTS-------------*/
-
+markersEl.addEventListener('click', handleMarkerClick);
 
 /*----------FUNCTIONS-------------*/
 initialize();
+
+function handleMarkerClick(e) {
+    let element = e.target; //e.target is <div id="column0"></div>
+    //Only want the index value, not the entire id of 'column0'
+    //columnId is a number (0-6)
+    const columnId = parseInt(element.getAttribute('id').replace('column', ''));
+    
+    //When the space between the marker is clicked, it is NaN (<div id="markers"></div>)
+    if (isNaN(columnId) || winner) return;
+
+    //rowId returns the index of the first 0 it sees in the row
+    let rowId = board[columnId].indexOf(0);
+    //If the whole row is full (can't find any 0's), it returns -1 
+    if (rowId === -1) return; //can't add anymore to that row
+
+    //Whoever's turn it is, replace a cell in the board with their move
+    board[columnId][rowId] = turn;
+    setWinner();
+    turn = turn * -1; //Change player's turn
+    render();
+}
+
+function setWinner() {
+    let foundZero = false;
+    for (let columnIndex = 0; columnIndex < board.length; columnIndex++) {
+        for (let rowIndex = 0; rowIndex < board[columnIndex].length; rowIndex++) {
+            
+        }
+    }
+}
 
 function render() {
     board.forEach((columnArray, columnIndex) => {
