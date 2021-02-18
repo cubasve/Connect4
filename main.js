@@ -44,9 +44,72 @@ function setWinner() {
     let foundZero = false;
     for (let columnIndex = 0; columnIndex < board.length; columnIndex++) {
         for (let rowIndex = 0; rowIndex < board[columnIndex].length; rowIndex++) {
-            
+            winner = 
+                checkVerticalWin(columnIndex, rowIndex) ||
+                checkHorizontalWin(columnIndex, rowIndex) ||
+                checkDiagonalWin(columnIndex, rowIndex, 1) || //checks up diagonally
+                checkDiagonalWin(columnIndex, rowIndex, -1); //check down diagonally
+
+            if (winner) break;
+
+            //If foundZero is still falsey, it executes board[columnIndex][rowIndex] === 0
+            //If foundZero becomes truthy, 
+            foundZero = foundZero || board[columnIndex][rowIndex] === 0;
         }
     }
+}
+
+//checks up to see if there is a winner
+function checkVerticalWin(columnIndex, rowIndex) {
+    //A win needs 4 connected moves and there are 6 spots in a row
+    //If rowIndex > 2, then there will not be 4 connected moves (it's less than 4)
+    if (rowIndex > 2) return null;
+    const columnArray = board[columnIndex];
+
+    //Add numbers together and take absolute value to see if it equals 4 (have a winner?)
+    let absoluteValue = Math.abs(
+        columnArray[rowIndex] +
+        columnArray[rowIndex + 1] + //one cell above in same row
+        columnArray[rowIndex + 2] + //another cell above in same row
+        columnArray[rowIndex + 3] //another cell above in same row
+    );
+    //If the absolutevalue is 4, return the player at those spots
+    //OR return null as the winner
+    return absoluteValue === 4 ? columnArray[rowIndex] : null;
+}
+
+//checks to the right to see if there is a winner
+function checkHorizontalWin(columnIndex, rowIndex) {
+    //A win needs 4 connected moves and there are 7 spots in a column
+    //if columnIndex > 3, then there will not be 4 connected moves (it's less than 4)
+    if (columnIndex > 3) return null;
+    let absoluteValue = Math.abs(
+        board[columnIndex][rowIndex] + 
+        board[columnIndex + 1][rowIndex] + //different row, same column position (to the right)
+        board[columnIndex + 2][rowIndex] + 
+        board[columnIndex + 3][rowIndex]
+    )
+    return absoluteValue === 4 ? board[columnIndex][rowIndex] : null;
+}
+
+//verticalOffset = checking up and down
+//if checking down: verticalOffset = -1
+//if checking up: verticalOffset = +1
+function checkDiagonalWin(columnIndex, rowIndex, verticalOffset) {
+    //CASE 1: If columnIndex > 3, there will not be 4 diagonal connected dots (it's less than 4)
+    //CASE 2: If I'm checking upwards and rowIndex > 2, there will not be 4 diagonal connected dots
+    //CASE 3: If I'm checking downwards and rowIndex < 3, 
+    if (columnIndex > 3 || (verticalOffset > 0 && rowIndex > 2) || (verticalOffset < 0 && rowIndex < 3)) return null;
+
+    //verticalOffset is either 1(up) or -1(down)
+    let absoluteValue = Math.abs(
+        board[columnIndex][rowIndex] + 
+        board[columnIndex + 1][rowIndex + verticalOffset] + 
+        board[columnIndex + 2][rowIndex + verticalOffset * 2] + 
+        board[columnIndex + 3][rowIndex + verticalOffset * 3]
+    )
+
+    return absoluteValue === 4 ? board[columnIndex][rowIndex] : null;
 }
 
 function render() {
